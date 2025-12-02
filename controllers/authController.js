@@ -1,4 +1,4 @@
-const User = require("../Models/userModel");
+const User = require("../models/userModel");
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 
@@ -6,11 +6,9 @@ module.exports.register = async (req, res) => {
   try {
     const { name, email, password, role } = req.body;
 
-    // Check existing user
     const exist = await User.findOne({ email });
     if (exist) return res.status(400).json({ message: "Email already registered" });
 
-    // Hash password
     const hashed = await bcrypt.hash(password, 10);
 
     const user = new User({
@@ -33,22 +31,18 @@ module.exports.login = async (req, res) => {
   try {
     const { email, password } = req.body;
 
-    // Check user
     const user = await User.findOne({ email });
     if (!user) return res.status(400).json({ message: "User not found" });
 
-    // Compare password
     const match = await bcrypt.compare(password, user.password);
     if (!match) return res.status(400).json({ message: "Wrong password" });
 
-    // Generate JWT
     const token = jwt.sign(
       { id: user._id, role: user.role, name: user.name },
       process.env.JWT_SECRET,
       { expiresIn: "1d" }
     );
 
-    // ⭐ SEND USER DETAILS ALSO ⭐
    res.json({
   message: "Login successful",
   token,
