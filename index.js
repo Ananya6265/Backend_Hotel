@@ -14,5 +14,5 @@ app.use("/", require('./Routes/router'));
 
 app.use("/api/rooms", require("./Routes/roomRoutes"));
 
-const PORT = process.env.PORT || 3000;
+const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => console.log(`Server running on PORT ${PORT}`));
